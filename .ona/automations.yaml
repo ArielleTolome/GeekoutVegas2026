@@ -1,66 +1,37 @@
 # Ona Automations Configuration
 # For Geekout Vegas 2026 Workshop
-# Docs: https://ona.com/docs/ona/configuration/tasks-and-services/basic-configuration
 #
-# NOTE: Only 'services' and 'tasks' are valid root-level fields
-# Ports are configured via CLI: gitpod environment port open 3000
-
-services:
-  welcome-server:
-    name: Welcome Page Server
-    description: Serves the workshop welcome page on port 3000
-    triggeredBy:
-      - postDevcontainerStart
-    commands:
-      start: npx http-server -p 3000 -c-1
+# Pre-opens ports so when attendees build their app,
+# it automatically forwards to a public URL
 
 tasks:
-  install-deps:
-    name: Install Dependencies
-    description: Install npm packages
+  setup:
+    name: Setup Environment
+    description: Install dependencies and open ports
     triggeredBy:
       - postDevcontainerStart
-    command: npm install
-
-  install-playwright:
-    name: Install Playwright
-    description: Install Playwright Chromium browser
-    dependsOn:
-      - install-deps
-    command: npx playwright install chromium
-
-  install-claude:
-    name: Install Claude Code
-    description: Install Claude Code CLI globally
-    command: npm install -g @anthropic-ai/claude-code
-
-  open-ports:
-    name: Open Public Ports
-    description: Make ports publicly accessible
-    dependsOn:
-      - install-deps
     command: |
-      gitpod environment port open 3000 --name "Welcome Page" || true
-      gitpod environment port open 3001 --name "Dev Server" || true
-      gitpod environment port open 5173 --name "Vite" || true
-      gitpod environment port open 8080 --name "HTTP Server" || true
+      npm install
+      npx playwright install chromium
+      npm install -g @anthropic-ai/claude-code
 
-  show-welcome:
-    name: Show Welcome
-    description: Display welcome message in terminal
-    dependsOn:
-      - install-deps
-      - install-playwright
-      - install-claude
-      - open-ports
-    command: |
+      # Pre-open ports for public access
+      gitpod environment port open 3000 || true
+      gitpod environment port open 3001 || true
+      gitpod environment port open 4000 || true
+      gitpod environment port open 5000 || true
+      gitpod environment port open 5173 || true
+      gitpod environment port open 8000 || true
+      gitpod environment port open 8080 || true
+
       echo ""
       echo "=============================================="
-      echo "  WELCOME TO GEEKOUT VEGAS 2026!"
+      echo "  GEEKOUT VEGAS 2026 - READY!"
       echo "=============================================="
       echo ""
-      echo "Quick Start:"
-      echo "  1. export ANTHROPIC_API_KEY=your_key"
-      echo "  2. export GEMINI_API_KEY=your_key"
-      echo "  3. Type: claude"
+      echo "Ports 3000, 5173, 8080 are PUBLIC and ready."
+      echo ""
+      echo "1. export ANTHROPIC_API_KEY=your_key"
+      echo "2. export GEMINI_API_KEY=your_key"
+      echo "3. Type: claude"
       echo ""
