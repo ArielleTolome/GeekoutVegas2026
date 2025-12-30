@@ -1,6 +1,12 @@
+# Gitpod / Ona Configuration
+# For 200 workshop attendees - Zero Install Setup
+#
+# IMPORTANT: 'init' runs during PREBUILD (cached)
+#            'command' runs at STARTUP (every time)
+
 github:
   prebuilds:
-    master: true
+    main: true
     branches: true
     pullRequests: true
     pullRequestsFromForks: false
@@ -8,24 +14,32 @@ github:
     addComment: false
     addBadge: true
 
+# Use Gitpod's full workspace image (Node 20 + Python + Go + etc)
 image: gitpod/workspace-full:latest
 
 tasks:
-  - name: Workshop Setup
+  - name: Workshop Environment
+    # INIT: Runs during prebuild - results are cached!
     init: |
+      echo "🔧 Installing dependencies (this is cached in prebuild)..."
       npm install
+      echo "🎭 Installing Playwright Chromium..."
       npx playwright install chromium
+      echo "📦 Installing Claude Code CLI..."
       npm install -g @anthropic-ai/claude-code
+      echo "✅ Prebuild complete!"
+
+    # COMMAND: Runs every time workspace starts
     command: |
       chmod +x welcome.sh
-      bash welcome.sh
+      ./welcome.sh
 
 ports:
   - port: 3000
     onOpen: open-preview
     visibility: public
+    name: Landing Page Preview
 
 vscode:
   extensions:
     - anthropic.claude-dev
-    - google.gemini-code-assist

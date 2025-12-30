@@ -1,28 +1,28 @@
 {
-  "name": "Geekout Vegas 2026 Cloner",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
-  },
+  "name": "Geekout Vegas 2026 - Landing Page Cloner Workshop",
+
+  // Use Node 20 base image (has npm/npx pre-installed)
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+
+  // Official features from Anthropic and DevContainers
   "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "20"
-    },
     "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
   },
-  "remoteUser": "vscode",
+
+  "remoteUser": "node",
+
   "customizations": {
     "vscode": {
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "terminal.integrated.shellIntegration.enabled": true
+        "terminal.integrated.defaultProfile.linux": "bash"
       },
       "extensions": [
-        "anthropic.claude-dev",
-        "google.gemini-code-assist"
+        "anthropic.claude-dev"
       ]
     }
   },
+
+  // Port forwarding for landing page preview
   "forwardPorts": [3000],
   "portsAttributes": {
     "3000": {
@@ -31,6 +31,10 @@
       "visibility": "public"
     }
   },
+
+  // Runs after container is created (during prebuild if enabled)
   "postCreateCommand": "npm install && npx playwright install chromium && chmod +x welcome.sh",
-  "postStartCommand": "bash welcome.sh"
+
+  // Runs every time container starts
+  "postStartCommand": "./welcome.sh"
 }
