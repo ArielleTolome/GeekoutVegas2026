@@ -31,6 +31,6 @@
       "visibility": "public"
     }
   },
-  "postCreateCommand": "npm install && sudo chown -R vscode node_modules && chmod +x welcome.sh",
+  "postCreateCommand": "npm install && npx playwright install chromium && chmod +x welcome.sh",
   "postStartCommand": "bash welcome.sh"
 }

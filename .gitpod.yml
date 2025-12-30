@@ -8,14 +8,14 @@ github:
     addComment: false
     addBadge: true
 
-image:
-  file: .devcontainer/Dockerfile
+image: gitpod/workspace-full:latest
 
 tasks:
   - name: Workshop Setup
     init: |
       npm install
       npx playwright install chromium
+      npm install -g @anthropic-ai/claude-code
     command: |
       chmod +x welcome.sh
       bash welcome.sh
