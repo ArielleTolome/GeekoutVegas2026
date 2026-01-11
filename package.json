@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "node server/index.js",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "postinstall": "npx playwright install chromium",
+    "test": "node server/test.js"
   },
   "author": "Samar Hussain",
   "license": "MIT",
@@ -13,7 +15,8 @@
     "express": "^4.21.0",
     "playwright": "^1.49.1",
     "ws": "^8.18.0",
-    "node-html-parser": "^6.1.13"
+    "node-html-parser": "^6.1.13",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

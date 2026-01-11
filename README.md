@@ -1,4 +1,4 @@
-   # GEEKOUT VEGAS 2026
+# GEEKOUT VEGAS 2026
 
 ```
  ██████╗ ███████╗███████╗██╗  ██╗ ██████╗ ██╗   ██╗████████╗
@@ -16,37 +16,135 @@
   ╚═══╝  ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    ╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝
 ```
 
-## Website Cloner Workshop
+## Website Cloner - Wonka Labs Edition
 
-> **Build a pixel-perfect website cloner with Claude Code in 45 minutes**
+> **Clone any website with pixel-perfect accuracy using real browser rendering**
 
 ---
 
-## Quick Start (One-Click!)
+## Quick Start
+
+### Option 1: GitHub Codespaces (Recommended)
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/phc-global/GeekoutVegas2026)
 
----
-
-## Setup
-
-### 1. Start Claude Code
+### Option 2: Local Setup
 
 ```bash
-claude
+# 1. Clone the repository
+git clone https://github.com/phc-global/GeekoutVegas2026.git
+cd GeekoutVegas2026
+
+# 2. Install dependencies (also installs Chromium)
+npm install
+
+# 3. Start the server
+npm run dev
 ```
-
-### 2. Paste The Prompt Below!
-
-Copy and paste the prompt into Claude Code and watch it build the entire app.
 
 ---
 
-## The Prompt
+## Usage
 
-> **How we made this prompt:** [View the ChatGPT conversation](https://chatgpt.com/share/6956cfff-7e08-800d-b1ab-e7b64f71d60d)
+1. Open your browser to `http://localhost:3000`
+2. Enter a URL to clone (e.g., `https://example.com`)
+3. Click **Clone It**
+4. Watch the live console as the cloner:
+   - Launches a real Chromium browser
+   - Navigates to the page
+   - Auto-scrolls to trigger lazy loading
+   - Downloads all assets (images, CSS, JS, fonts)
+   - Rewrites URLs to use local assets
+5. Click **Open Clone** to view your cloned page
 
-...............................................................................
+---
+
+## Features
+
+- **Real Browser Rendering** - Uses Playwright with Chromium to render JavaScript-heavy pages
+- **Auto-Scroll** - Automatically scrolls to load lazy content
+- **Asset Download** - Downloads images, CSS, JS, fonts, and more
+- **URL Rewriting** - All asset URLs are rewritten to use local paths
+- **Live Console** - Stream browser console and network logs in real-time
+- **Progress Tracking** - Visual progress steps for the cloning pipeline
+- **Futuristic UI** - Ultra-futuristic Willy Wonka themed interface
+
+---
+
+## API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/clone` | POST | Start a clone job. Body: `{ url: string }` |
+| `/api/jobs/:jobId` | GET | Get job status and result |
+| `/api/test` | GET | Run self-test on example.com |
+| `/api/health` | GET | Health check |
+| `/clone/:folder/` | GET | Serve cloned websites |
+
+WebSocket: Connect to `ws://localhost:3000?jobId=<jobId>` for live logs.
+
+---
+
+## Project Structure
+
+```
+.
+├── server/
+│   ├── index.js      # Express server + WebSocket
+│   ├── cloner.js     # Core cloning pipeline
+│   └── utils.js      # Helper functions
+├── public/
+│   ├── index.html    # Futuristic UI
+│   └── app.js        # Frontend logic
+├── output/           # Cloned websites go here
+└── package.json
+```
+
+---
+
+## Troubleshooting
+
+### Chromium not installed
+```bash
+npx playwright install chromium
+```
+
+### Permission denied on Mac/Linux
+```bash
+chmod +x node_modules/.bin/*
+```
+
+### EACCES error on port 3000
+```bash
+PORT=8080 npm run dev
+```
+
+### Clone fails on complex sites
+- Some sites have anti-bot protection
+- JavaScript-only content may not fully render
+- Try increasing wait times in `cloner.js`
+
+---
+
+## Pre-Installed Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| **Node.js 20+** | Runtime |
+| **Playwright** | Browser automation & rendering |
+| **Express** | Web server |
+| **WebSocket (ws)** | Real-time log streaming |
+| **node-html-parser** | HTML parsing |
+| **uuid** | Job ID generation |
+
+---
+
+## Build Your Own
+
+Want to build this from scratch? Start Claude Code and paste this prompt:
+
+<details>
+<summary>View the full prompt</summary>
 
 ```
 YOU ARE CLAUDE CODE.
@@ -80,146 +178,17 @@ TECH STACK
 - Playwright (Chromium)
 - Minimal frontend: vanilla HTML + Tailwind via CDN OR a small bundled CSS. Keep it fast and workshop-friendly.
 - Use WebSocket (ws) OR Server-Sent Events for streaming logs to UI.
-
-USER FLOW (WEB UI)
-- Home page: input for URL + "Clone" button.
-- On submit:
-  - Show live log console (like devtools) streaming:
-    - [console] page console logs
-    - [network] requests and responses
-    - [pipeline] steps
-  - Show progress:
-    - Launch browser
-    - Navigate
-    - Auto-scroll
-    - Snapshot DOM
-    - Download assets
-    - Rewrite references
-    - Save output
-    - Done
-- When complete:
-  - Display "Open Clone" link and output folder path.
-
-CLONING PIPELINE (HIGH-QUALITY MVP)
-Implement a pipeline that does:
-A) Validate URL and normalize it.
-B) Launch Playwright Chromium with sensible args:
-   - headless true by default, but allow UI toggle in settings for debugging.
-   - set viewport 1366x768.
-C) Attach listeners:
-   - page.on("console", ...)
-   - page.on("pageerror", ...)
-   - page.on("request", ...)
-   - page.on("response", ...)
-   - Emit these logs to the UI stream.
-D) Navigate:
-   - goto(url, { waitUntil: "domcontentloaded", timeout: 60000 })
-   - wait a bit for hydration
-   - auto-scroll to bottom to trigger lazy content (loop: scroll, wait, until height stabilizes or max iterations)
-   - waitUntil network idle with a safety timeout
-E) Extract rendered HTML:
-   - const html = await page.content()
-   - Also collect <base href> if present
-F) Collect asset URLs from the rendered HTML:
-   - Parse HTML (use jsdom or node-html-parser).
-   - Extract src/href from:
-     - img[src], source[srcset], link[rel=stylesheet][href], script[src], video[src], audio[src]
-     - also handle srcset: download each URL, rewrite to local
-     - inline styles with url(...) (best effort)
-   - Also collect fonts referenced in CSS (best effort):
-     - For each downloaded CSS file, parse url(...) references and download them too.
-G) Download assets:
-   - Use Playwright's request context OR node fetch with proper headers.
-   - Save assets into ./output/.../assets/<type>/...
-   - Use deterministic filenames:
-     - hash(url) + original extension if any
-   - Respect relative URLs (resolve against final page URL).
-H) Rewrite HTML references:
-   - Replace remote URLs with local relative paths.
-   - Preserve querystrings only if needed for extension detection; otherwise ignore.
-   - Ensure output index.html references local assets.
-I) Save output:
-   - index.html in output folder
-   - assets subfolders
-J) Serve clone:
-   - Express should statically serve ./output so the user can open the clone from the UI:
-     /clone/<folder>/index.html
-
-IMPORTANT EDGE CASES (DO BEST EFFORT, NOT PERFECT)
-- Relative URLs must resolve correctly.
-- Data URLs should be left as-is.
-- If a resource fails to download, keep original URL and log a warning.
-- If the page uses heavy JS to load content after idle, the autoscroll + wait should still capture most of it.
-
-PROJECT STRUCTURE
-- /server
-  - index.js (Express server, routes, websocket/SSE)
-  - cloner.js (core pipeline)
-  - utils.js (hashing, url normalize, safe folder names)
-- /public
-  - index.html (UI)
-  - app.js (UI logic to call clone endpoint + subscribe to logs)
-  - styles.css (optional)
-- /output (generated clones)
-
-API
-- POST /api/clone
-  Body: { url: string }
-  Returns: { jobId, outputPath, openUrl }
-- GET /api/jobs/:jobId (optional, can be in-memory only)
-- Logs streamed:
-  - WS: /ws?jobId=...
-  - or SSE: /api/stream/:jobId
-
-WORKSHOP FRIENDLY
-- Provide a single command to run:
-  - npm install
-  - npx playwright install chromium (or include in postinstall)
-  - npm run dev
-- Include a README with:
-  - prerequisites
-  - how to run
-  - how to clone a URL
-  - troubleshooting (mac/windows)
-- Keep code small and readable.
-
-QUALITY CHECKS
-After implementing, add a "self-test" function:
-- Clone a known simple page (example.com) and verify:
-  - output folder created
-  - index.html exists
-  - at least 1 asset downloaded
-  - clone opens in browser route
-
-DELIVERABLES
-1) Full working code in the repo
-2) README.md with steps
-3) The UI with "ultra-futuristic Willy Wonka" vibe:
-   - neon gradients, candy glow, playful futuristic typography
-   - BUT do not affect the clone output styling.
-
-NOW BUILD IT.
-- Create all files.
-- Implement the server, UI, cloning pipeline, streaming logs.
-- Ensure it runs end-to-end.
-- Make sensible engineering choices to finish fast.
-- Use design skill for frontend design and use MCPs we have to test it.
 ```
 
-...............................................................................
+</details>
 
 ---
 
 ## Push to Your Own GitHub
 
-After building, save your work to your own repo:
-
 ```bash
 # 1. Create a new repo on GitHub (github.com/new)
-#    Name it: website-cloner (or whatever you want)
-#    Do NOT initialize with README
-
-# 2. Change the remote to your repo
+# 2. Change the remote
 git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 
 # 3. Push your code
@@ -227,17 +196,6 @@ git add -A
 git commit -m "My website cloner from Geekout Vegas 2026"
 git push -u origin main
 ```
-
----
-
-## Pre-Installed Dependencies
-
-| Package | Purpose |
-|---------|---------|
-| **Node.js 20** | Runtime |
-| **Playwright** | Browser automation & cloning |
-| **Express** | Web server |
-| **WebSocket (ws)** | Real-time log streaming |
 
 ---
 
